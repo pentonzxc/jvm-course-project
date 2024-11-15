@@ -32,6 +32,10 @@ import io.circe.derivation.ConfiguredEncoder
 import io.circe.parser.*
 import Main.orderMap
 import io.vertx.ext.web.handler.BodyHandler
+import io.vertx.micrometer.backends.BackendRegistries
+import io.micrometer.core.instrument.config.MeterFilter
+import io.micrometer.core.instrument.Meter
+import io.micrometer.core.instrument.distribution.DistributionStatisticConfig
 
 object Main:
   val orderMap: TrieMap[UUID, Order] = TrieMap.empty
@@ -62,6 +66,24 @@ object Main:
           .setEnabled(true)
       )
     );
+
+    val registry =
+      BackendRegistries.getDefaultNow().asInstanceOf[PrometheusMeterRegistry];
+
+    registry
+      .config()
+      .meterFilter(new MeterFilter() {
+        override def configure(
+            id: Meter.Id,
+            config: DistributionStatisticConfig
+        ): DistributionStatisticConfig = {
+          DistributionStatisticConfig
+            .builder()
+            .percentiles(0.95, 0.99)
+            .build()
+            .merge(config);
+        }
+      });
 
     // Set up a router to handle requests
     val router = Router.router(vertx)

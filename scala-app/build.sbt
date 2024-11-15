@@ -21,6 +21,7 @@ lazy val root = project
         circe ++
         munit,
     assembly / mainClass := Some("Main"),
+    assembly / assemblyOutputPath := file("./scala-app.jar"),
     ThisBuild / assemblyMergeStrategy := {
       case PathList(
             "META-INF",
