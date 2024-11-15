@@ -46,9 +46,9 @@ func main() {
 		rps  int
 	)
 
-	host = os.Getenv("APP_HOST")
-	port = os.Getenv("APP_PORT")
-	rps, err := strconv.Atoi(os.Getenv("APP_LOAD_RPS"))
+	host = os.Getenv("TARGET_APP_HOST")
+	port = os.Getenv("TARGET_APP_PORT")
+	rps, err := strconv.Atoi(os.Getenv("TARGET_LOAD_RPS"))
 
 	if err != nil {
 		log.Fatal("can't parse rps")
@@ -59,7 +59,7 @@ func main() {
 
 	createOrderUrl := fmt.Sprintf("http://%s:%s/order/create", host, port)
 	getOrderUrl := func(id string) string {
-		return fmt.Sprintf("http://%s:%s/order/%s", host, port, id)
+		return fmt.Sprintf("http://%s:%s/order?id=%s", host, port, id)
 	}
 
 	for range ticker.C {

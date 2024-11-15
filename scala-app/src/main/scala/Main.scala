@@ -36,8 +36,7 @@ import io.vertx.micrometer.backends.BackendRegistries
 import io.micrometer.core.instrument.config.MeterFilter
 import io.micrometer.core.instrument.Meter
 import io.micrometer.core.instrument.distribution.DistributionStatisticConfig
-import scala.util.{Try, Failure,Success}
-
+import scala.util.{Try, Failure, Success}
 
 object Main:
   val orderMap: TrieMap[UUID, Order] = TrieMap.empty
@@ -48,12 +47,12 @@ object Main:
       PrometheusConfig.DEFAULT
     )
 
-    val port = 
+    val port =
       sys.env.get("APP_PORT").map(p => Try(p.toInt)) match
         case None => throw new RuntimeException("port isn't specified")
         case Some(Failure(ex)) => throw ex
-        case Some(Success(p)) => p
-      
+        case Some(Success(p))  => p
+
     JvmMemoryMetrics().bindTo(prometheusRegistry)
     JvmGcMetrics().bindTo(prometheusRegistry)
     JvmThreadMetrics().bindTo(prometheusRegistry)
@@ -110,11 +109,10 @@ object Main:
       .handler(handleCreateOrder)
 
     router
-      .get("/order/:id")
+      .get("/order")
       .handler(handleGetOrder)
 
     router.get("/metrics").handler(PrometheusScrapingHandler.create());
-
 
     val serverOptions = new HttpServerOptions()
     serverOptions.setPort(port)
@@ -124,7 +122,9 @@ object Main:
       .requestHandler(router)
       .listen { result =>
         if result.succeeded() then
-          println(s"Server is running on ${serverOptions.getHost()}:${serverOptions.getPort()}")
+          println(
+            s"Server is running on ${serverOptions.getHost()}:${serverOptions.getPort()}"
+          )
         else println(s"Failed to start server: ${result.cause().getMessage}")
       }
 
@@ -175,7 +175,7 @@ def handleCreateOrder(ctx: RoutingContext): Unit =
       .end("Expected 'Content-Type: application/json' header")
 
 def handleGetOrder(ctx: RoutingContext): Unit =
-  val id = ctx.pathParam("id")
+  val id = ctx.queryParam("id").get(0)
   val orderOpt = orderMap.get(UUID.fromString(id))
   orderOpt match
     case Some(order) =>
