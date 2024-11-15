@@ -49,7 +49,9 @@ object Main:
 
     val port =
       sys.env.get("APP_PORT").map(p => Try(p.toInt)) match
-        case None => throw new RuntimeException("port isn't specified")
+        case None => 
+          println("port isn't specified")
+          8080
         case Some(Failure(ex)) => throw ex
         case Some(Success(p))  => p
 

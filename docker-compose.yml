@@ -23,35 +23,49 @@ services:
       - ./grafana/dashboards:/var/lib/grafana/dashboards
       - grafana-data:/var/lib/grafana
 
-  scala-vertx-app:
+  scala-app:
+    image: scala-app
     build:
       context: ./scala-app
       dockerfile: "./Dockerfile"
     ports:
       - "8080:8080"
-    healthcheck:
-      test: [ "CMD", "curl", "localhost:8080" ]
-      interval: 10s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
     environment:
       - APP_PORT=8080
     networks:
       - monitoring
 
-  scala-vertx-app-load-client:
+  go-app:
+    image: go-app
+    build:
+      context: ./go-app
+      dockerfile: "./Dockerfile"
+    ports:
+      - "8081:8081"
+    environment:
+      - APP_PORT=8081
+    networks:
+      - monitoring
+
+  scala-app-client:
     build:
       context: ./client
       dockerfile: "./Dockerfile"
     environment:
-      - TARGET_APP_HOST=scala-vertx-app
+      - TARGET_APP_HOST=scala-app
       - TARGET_APP_PORT=8080
       - TARGET_LOAD_RPS=100
-    depends_on:
-      scala-vertx-app:
-        condition: service_healthy
-        restart: true
+    networks:
+      - monitoring
+
+  go-app-client:
+    build:
+      context: ./client
+      dockerfile: "./Dockerfile"
+    environment:
+      - TARGET_APP_HOST=go-app
+      - TARGET_APP_PORT=8081
+      - TARGET_LOAD_RPS=100
     networks:
       - monitoring
 

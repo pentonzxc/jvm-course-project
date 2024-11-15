@@ -5,6 +5,9 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
-  - job_name: 'scala-vertx-app'
+  - job_name: 'scala-app'
     static_configs:
-      - targets: ['scala-vertx-app:8080']
+      - targets: ['scala-app:8080']
+  - job_name: 'go-app'
+    static_configs:
+      - targets: ['go-app:8081']

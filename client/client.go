@@ -101,13 +101,13 @@ func main() {
 			resp1, err := client.Post(createOrderUrl, "application/json", bytes.NewBuffer(jsonData))
 
 			if err != nil {
-				log.Printf("error sending create order request: %v", err)
+				// log.Printf("error sending create order request: %v", err)
 				return
 			}
 
 			resp2, err := client.Get(getOrderUrl(id))
 			if err != nil {
-				log.Printf("error sending request: %v", err)
+				// log.Printf("error sending request: %v", err)
 				return
 			}
 
