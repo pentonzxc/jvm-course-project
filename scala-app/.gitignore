@@ -32,6 +32,6 @@ metals.sbt
 /.worksheet/
 /src/main/scala/.scala-build/*
 
-
+.env
 
 thrash/
