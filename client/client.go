@@ -41,18 +41,14 @@ type CustomerInfo struct {
 
 func main() {
 	var (
+		host string
 		port string
 		rps  int
 	)
 
-	args := os.Args[1:]
-
-	if len(args) < 2 {
-		log.Fatal("port and rps isn't specified")
-	}
-
-	port = args[0]
-	rps, err := strconv.Atoi(args[1])
+	host = os.Getenv("APP_HOST")
+	port = os.Getenv("APP_PORT")
+	rps, err := strconv.Atoi(os.Getenv("APP_LOAD_RPS"))
 
 	if err != nil {
 		log.Fatal("can't parse rps")
@@ -61,12 +57,12 @@ func main() {
 	client := &http.Client{}
 	ticker := time.NewTicker(time.Second / time.Duration(rps))
 
-	createOrderUrl := fmt.Sprintf("http://localhost:%s/order/create", port)
+	createOrderUrl := fmt.Sprintf("http://%s:%s/order/create", host, port)
 	getOrderUrl := func(id string) string {
-		return fmt.Sprintf("http://localhost:%s/order/%s", port, id)
+		return fmt.Sprintf("http://%s:%s/order/%s", host, port, id)
 	}
 
-	for _ = range ticker.C {
+	for range ticker.C {
 		go func() {
 			id := uuid.New().String()
 			order := Order{
