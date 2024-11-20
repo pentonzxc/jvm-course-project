@@ -10,3 +10,6 @@ run-exact args="":
 
 run-rebuild args="":
     docker-compose up --build --force-recreate
+
+watch-logs args="":
+  while true; do sleep 2; docker-compose logs args -f; done

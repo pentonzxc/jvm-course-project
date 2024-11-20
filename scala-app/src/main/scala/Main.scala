@@ -18,6 +18,7 @@ import io.micrometer.core.instrument.binder.system.ProcessorMetrics
 import io.micrometer.core.instrument.Counter
 import java.util.UUID
 import scala.collection.JavaConverters._
+import io.vertx.core.Future as VertxFuture
 
 import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.Executors
@@ -44,6 +45,9 @@ import Main.prometheusRegistry
 import io.vertx.core.Handler
 import io.micrometer.core.instrument.Metrics
 import io.micrometer.core.instrument.Tag
+import io.micrometer.core.instrument.Meter.Id
+import io.vertx.micrometer.backends.BackendRegistry
+import java.time.Instant
 
 object Main:
 
@@ -67,15 +71,30 @@ object Main:
     ProcessorMetrics().bindTo(prometheusRegistry)
     JvmCompilationMetrics().bindTo(prometheusRegistry)
 
+
     // server
     val vertx = Vertx.vertx(
-      new VertxOptions().setMetricsOptions(
-        new MicrometerMetricsOptions()
-          .setPrometheusOptions(new VertxPrometheusOptions().setEnabled(true))
-          .setMicrometerRegistry(prometheusRegistry)
-          .setEnabled(true)
-      )
+      // new VertxOptions().setMetricsOptions(
+      //   new MicrometerMetricsOptions()
+      //     .setPrometheusOptions(new VertxPrometheusOptions()
+      //       .setPublishQuantiles(false)
+      //       .setEnabled(true)
+      //     )
+      //     .setMicrometerRegistry(prometheusRegistry)
+      //     .setEnabled(true)
+      // )
     );
+
+    // BackendRegistries.getDefaultNow().asInstanceOf[PrometheusMeterRegistry].config().meterFilter(
+    //     new MeterFilter() {
+    //       override def configure(id: Id, config: DistributionStatisticConfig): DistributionStatisticConfig = {
+    //         return DistributionStatisticConfig.builder()
+    //             .serviceLevelObjectives(.005, .01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10)
+    //             .build()
+    //             .merge(config);
+    //       }
+    //   }
+    // )
 
     // Set up a router to handle requests
     val router = Router.router(vertx)
@@ -93,7 +112,10 @@ object Main:
       .handler(observeMetrics(handleGetOrder, "/order"))
     router
       .get("/metrics")
-      .handler(PrometheusScrapingHandler.create());
+      .handler(s => {
+        println(s"scrape scala metrics at ${Instant.now()}")
+        PrometheusScrapingHandler.create()
+      })
 
     val serverOptions = new HttpServerOptions()
     serverOptions.setPort(port)
@@ -124,7 +146,7 @@ def handleRoot(ctx: RoutingContext): Unit =
 
 import io.vertx.core.json.JsonObject
 
-def handleCreateOrder(ctx: RoutingContext): Unit =
+def handleCreateOrder(ctx: RoutingContext): VertxFuture[?] =
 
   val contentType = ctx.request().getHeader("Content-Type")
 
@@ -155,7 +177,7 @@ def handleCreateOrder(ctx: RoutingContext): Unit =
       .setStatusCode(415)
       .end("Expected 'Content-Type: application/json' header")
 
-def handleGetOrder(ctx: RoutingContext): Unit =
+def handleGetOrder(ctx: RoutingContext): VertxFuture[?] =
   val id = ctx.queryParam("id").get(0)
   val orderOpt = orderMap.get(UUID.fromString(id))
   orderOpt match
@@ -189,35 +211,38 @@ object Model:
   case class Item(name: String) derives ConfiguredDecoder, ConfiguredEncoder
 
 def observeMetrics(
-    observe: RoutingContext => Unit,
+    observe: RoutingContext => VertxFuture[?],
     endpoint: String
 ): Handler[RoutingContext] =
   arg => {
     val startTime = System.nanoTime()
-    observe(arg)
-    val endTime = System.nanoTime()
+    val future = observe(arg)
+    future.onComplete { _ => 
+        val endTime = System.nanoTime()
+        Timer
+          .builder("http.request.duration.seconds")
+          .tags(
+            List(
+              Tag.of("app", "scala"),
+              Tag.of("endpoint", endpoint)
+            ).asJava
+          )
+          .serviceLevelObjectives(
+            Duration.ofMillis(5),
+            Duration.ofMillis(10),
+            Duration.ofMillis(25),
+            Duration.ofMillis(50),
+            Duration.ofMillis(100),
+            Duration.ofMillis(250),
+            Duration.ofMillis(500),
+            Duration.ofMillis(1000),
+            Duration.ofMillis(2500),
+            Duration.ofMillis(5000),
+            Duration.ofMillis(10000)
+          )
+          .register(prometheusRegistry)
+          .record(Duration.ofNanos(endTime - startTime))
 
-    Timer
-      .builder("http.request.duration.seconds")
-      .tags(
-        List(
-          Tag.of("app", "scala"),
-          Tag.of("endpoint", endpoint)
-        ).asJava
-      )
-      .serviceLevelObjectives(
-        Duration.ofMillis(5),
-        Duration.ofMillis(10),
-        Duration.ofMillis(25),
-        Duration.ofMillis(50),
-        Duration.ofMillis(100),
-        Duration.ofMillis(250),
-        Duration.ofMillis(500),
-        Duration.ofMillis(1000),
-        Duration.ofMillis(2500),
-        Duration.ofMillis(5000),
-        Duration.ofMillis(10000)
-      )
-      .register(prometheusRegistry)
-      .record(Duration.ofNanos(endTime - startTime))
+          // println(s"Request latency - ${startTime - endTime} (nanos)")
+    }x
   }
