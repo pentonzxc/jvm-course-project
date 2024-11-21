@@ -1,5 +1,4 @@
-import lmcoursier.internal.shaded.coursier.core.Repository.Complete.Input.Ver
-val scala3Version = "3.5.2"
+val scala3Version = "2.13.14"
 
 val VersionVertx = "4.4.0"
 val VersionPrometheus = "1.3.3"
@@ -60,5 +59,6 @@ val munit = List(
 
 val circe = List(
   "io.circe" %% "circe-core" % "0.14.10",
-  "io.circe" %% "circe-parser" % "0.14.10"
+  "io.circe" %% "circe-parser" % "0.14.10",
+  "io.circe" %% "circe-generic-extras" % "0.14.4"
 )
