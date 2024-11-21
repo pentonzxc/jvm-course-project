@@ -65,36 +65,7 @@ object Main:
         case Some(Failure(ex)) => throw ex
         case Some(Success(p))  => p
 
-    JvmMemoryMetrics().bindTo(prometheusRegistry)
-    JvmGcMetrics().bindTo(prometheusRegistry)
-    JvmThreadMetrics().bindTo(prometheusRegistry)
-    ProcessorMetrics().bindTo(prometheusRegistry)
-    JvmCompilationMetrics().bindTo(prometheusRegistry)
-
-
-    // server
-    val vertx = Vertx.vertx(
-      // new VertxOptions().setMetricsOptions(
-      //   new MicrometerMetricsOptions()
-      //     .setPrometheusOptions(new VertxPrometheusOptions()
-      //       .setPublishQuantiles(false)
-      //       .setEnabled(true)
-      //     )
-      //     .setMicrometerRegistry(prometheusRegistry)
-      //     .setEnabled(true)
-      // )
-    );
-
-    // BackendRegistries.getDefaultNow().asInstanceOf[PrometheusMeterRegistry].config().meterFilter(
-    //     new MeterFilter() {
-    //       override def configure(id: Id, config: DistributionStatisticConfig): DistributionStatisticConfig = {
-    //         return DistributionStatisticConfig.builder()
-    //             .serviceLevelObjectives(.005, .01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10)
-    //             .build()
-    //             .merge(config);
-    //       }
-    //   }
-    // )
+    val vertx = Vertx.vertx();
 
     // Set up a router to handle requests
     val router = Router.router(vertx)
@@ -106,15 +77,15 @@ object Main:
       })
     router
       .post("/order/create")
-      .handler(observeMetrics(handleCreateOrder, "/order/create"))
+      .blockingHandler(observeMetrics(handleCreateOrder, "/order/create"))
     router
       .get("/order")
       .handler(observeMetrics(handleGetOrder, "/order"))
     router
       .get("/metrics")
-      .handler(s => {
+      .handler(ctx => {
         println(s"scrape scala metrics at ${Instant.now()}")
-        PrometheusScrapingHandler.create()
+        PrometheusScrapingHandler.create(prometheusRegistry).handle(ctx)
       })
 
     val serverOptions = new HttpServerOptions()
@@ -244,5 +215,5 @@ def observeMetrics(
           .record(Duration.ofNanos(endTime - startTime))
 
           // println(s"Request latency - ${startTime - endTime} (nanos)")
-    }x
+    }
   }
