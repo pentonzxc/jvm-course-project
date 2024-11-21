@@ -37,15 +37,16 @@ object Main {
     router.route().handler(BodyHandler.create())
     router
       .get("/")
-      .handler(new Handler[RoutingContext] {
-        override def handle(ctx: RoutingContext): Unit = handleRoot(ctx)
-      })
+      .handler((ctx: RoutingContext) => handleRoot(ctx))
+
     router
       .post("/order/create")
-      .handler(observeMetrics(handleCreateOrder, "/order/create"))
+      .blockingHandler(observeMetrics(handleCreateOrder, "/order/create"))
+
     router
       .get("/order")
-      .handler(observeMetrics(handleGetOrder, "/order"))
+      .blockingHandler(observeMetrics(handleGetOrder, "/order"))
+
     router
       .get("/metrics")
       .handler((ctx: RoutingContext) => {
@@ -85,7 +86,7 @@ object Main {
     val contentType = ctx.request().getHeader("Content-Type")
 
     if ("application/json".equalsIgnoreCase(contentType)) {
-      val body = ctx.getBodyAsString()
+      val body = ctx.body().asString()
       jawn.decode[Order](body) match {
         case Left(err) =>
           err.printStackTrace()
