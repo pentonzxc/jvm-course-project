@@ -30,11 +30,11 @@ services:
       dockerfile: "./Dockerfile"
     environment:
       - APP_PORT=8080
-      - JAVA_TOOL_OPTIONS=-XX:StartFlightRecording=duration=3m,filename=/app/scala-app.jfr -XX:+AlwaysActAsServerClassMachine -Xmx512m -Xms512m
+      - JAVA_TOOL_OPTIONS=-XX:StartFlightRecording=duration=3m,filename=/app/scala-app.jfr -XX:+AlwaysActAsServerClassMachine -Xmx2g -Xms2g
     ports:
       - "8080:8080"
     cpus: 0.5
-    mem_limit: 512m
+    mem_limit: 3g
     networks:
       - monitoring
 
@@ -48,7 +48,7 @@ services:
     ports:
       - "8081:8081"
     cpus: 0.5
-    mem_limit: 512m
+    mem_limit: 1g
     networks:
       - monitoring
 
@@ -61,7 +61,7 @@ services:
       - TARGET_APP_PORT=8080
       - TARGET_LOAD_RPS=100
     cpus: 0.5
-    mem_limit: 512m
+    mem_limit: 1g
     networks:
       - monitoring
 
@@ -74,7 +74,7 @@ services:
       - TARGET_APP_PORT=8081
       - TARGET_LOAD_RPS=100
     cpus: 0.5
-    mem_limit: 512m
+    mem_limit: 1g
     networks:
       - monitoring
 

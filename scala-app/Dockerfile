@@ -1,5 +1,5 @@
 # Use a base image with sbt and JDK
-FROM sbtscala/scala-sbt:eclipse-temurin-18.0.2_1.8.0_3.2.0
+FROM sbtscala/scala-sbt:eclipse-temurin-17.0.13_11_1.10.6_2.13.15
 
 # Set working directory
 WORKDIR /app
@@ -18,7 +18,7 @@ COPY src /app/src
 RUN sbt assembly
 
 # Use a minimal base image for the runtime
-FROM openjdk:18.0.2.1-slim-buster
+FROM eclipse-temurin:17.0.13_11-jdk-noble
 
 # Set working directory
 WORKDIR /app

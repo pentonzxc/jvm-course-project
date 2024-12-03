@@ -10,7 +10,7 @@ lazy val root = project
     version := "0.1.0-SNAPSHOT",
     mainClass := Some("Main"),
     fork := true,
-    scalaVersion := "2.13.14",
+    scalaVersion := "2.13.15",
     libraryDependencies ++=
         zioHttp ++
         prometheus ++
