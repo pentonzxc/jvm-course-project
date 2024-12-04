@@ -30,10 +30,11 @@ services:
       dockerfile: "./Dockerfile"
     environment:
       - APP_PORT=8080
-      - JAVA_TOOL_OPTIONS=-XX:StartFlightRecording=duration=3m,filename=/app/scala-app.jfr -XX:+AlwaysActAsServerClassMachine -Xmx2g -Xms2g
+      - JAVA_TOOL_OPTIONS=-XX:StartFlightRecording=duration=10m,filename=/app/scala-app.jfr -XX:+AlwaysActAsServerClassMachine -Xmx2g -Xms2g
+      # -Xlog:compilation*=debug
     ports:
       - "8080:8080"
-    cpus: 0.5
+    cpus: 2
     mem_limit: 3g
     networks:
       - monitoring
@@ -47,7 +48,7 @@ services:
       - APP_PORT=8081
     ports:
       - "8081:8081"
-    cpus: 0.5
+    cpus: 2
     mem_limit: 1g
     networks:
       - monitoring

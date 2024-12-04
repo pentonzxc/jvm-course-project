@@ -2,7 +2,6 @@ val prometheusVersion = "1.3.3"
 val doobieVersion = "1.0.0-RC4"
 val circeVersion = "0.14.1"
 
-
 lazy val root = project
   .in(file("."))
   .settings(
@@ -12,9 +11,8 @@ lazy val root = project
     fork := true,
     scalaVersion := "2.13.15",
     libraryDependencies ++=
-        zioHttp ++
+      zioHttp ++
         prometheus ++
-        netty ++
         micrometer ++
         circe ++
         munit,
@@ -22,13 +20,9 @@ lazy val root = project
     assembly / assemblyOutputPath := file("./scala-app.jar"),
     ThisBuild / assemblyMergeStrategy := {
       case PathList("META-INF", _*) => MergeStrategy.discard
-      case x                             => MergeStrategy.first
+      case x                        => MergeStrategy.first
     }
   )
-
-val netty = List(
-  "io.netty" % "netty-resolver-dns-native-macos" % "4.1.100.Final" % "runtime"
-)
 
 val micrometer = List(
   "io.micrometer" % "micrometer-registry-prometheus" % "1.11.10"
@@ -50,7 +44,6 @@ val circe = Seq(
   "io.circe" %% "circe-generic-extras",
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion)
-
 
 val zioHttp = List(
   "dev.zio" %% "zio-http" % "3.0.1"
