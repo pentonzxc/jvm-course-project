@@ -32,9 +32,10 @@ services:
       - APP_PORT=8080
       - JAVA_TOOL_OPTIONS=-XX:StartFlightRecording=duration=10m,filename=/app/scala-app.jfr -XX:+AlwaysActAsServerClassMachine -Xmx2g -Xms2g
       # -Xlog:compilation*=debug
+      # -XX:+BackgroundCompilation
     ports:
       - "8080:8080"
-    cpus: 2
+    cpus: 0.5
     mem_limit: 3g
     networks:
       - monitoring
@@ -48,7 +49,7 @@ services:
       - APP_PORT=8081
     ports:
       - "8081:8081"
-    cpus: 2
+    cpus: 0.5
     mem_limit: 1g
     networks:
       - monitoring
