@@ -2,6 +2,8 @@ val prometheusVersion = "1.3.3"
 val doobieVersion = "1.0.0-RC4"
 val circeVersion = "0.14.1"
 
+enablePlugins(GraalVMNativeImagePlugin)
+
 lazy val root = project
   .in(file("."))
   .settings(
@@ -44,6 +46,16 @@ val circe = Seq(
   "io.circe" %% "circe-generic-extras",
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion)
+
+// dependencyOverrides ++= List(
+//   "io.netty" % "netty-codec" % "4.1.80.Final",
+//   "io.netty" % "netty-codec-http" % "4.1.80.Final",
+//   "io.netty" % "netty-common" % "4.1.80.Final",
+//   "io.netty" % "netty-handler" % "4.1.80.Final",
+//   "io.netty" % "netty-buffer" % "4.1.80.Final",
+//   "io.netty" % "netty-resolver" % "4.1.80.Final",
+//   "io.netty" % "netty-transport" % "4.1.80.Final"
+// )
 
 val zioHttp = List(
   "dev.zio" %% "zio-http" % "3.0.1"
