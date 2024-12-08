@@ -30,7 +30,7 @@ services:
       dockerfile: "./Dockerfile"
     environment:
       - APP_PORT=8080
-      - JAVA_TOOL_OPTIONS=-XX:StartFlightRecording=duration=10m,filename=/app/scala-app.jfr -XX:+AlwaysActAsServerClassMachine -Xmx2g -Xms2g
+      - JAVA_TOOL_OPTIONS=-XX:StartFlightRecording=duration=10m,filename=/app/scala-app.jfr -XX:+AlwaysActAsServerClassMachine -Xmx2g -Xms2g -Xint
       # -Xlog:compilation*=debug
       # -XX:+BackgroundCompilation
     ports:
