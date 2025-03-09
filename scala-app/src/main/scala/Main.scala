@@ -31,11 +31,11 @@ object Main extends ZIOAppDefault {
         Response.text(prometheusRegistry.scrape())
       ),
       Method.POST / "order" / "create" -> handler { req: Request =>
-        observeMetrics(handleCreateOrder(req), "/order/create")
+        withMetrics(handleCreateOrder(req), "/order/create")
           .orElseFail(Response.internalServerError("unknown error"))
       },
       Method.GET / "order" -> handler { req: Request =>
-        observeMetrics(handleGetOrder(req), "/order").orElseFail(
+        withMetrics(handleGetOrder(req), "/order").orElseFail(
           Response.internalServerError("unknown error")
         )
       }
@@ -105,7 +105,7 @@ object Main extends ZIOAppDefault {
     }
   }
 
-  def observeMetrics[R, E](
+  def withMetrics[R, E](
       effect: ZIO[R, E, Response],
       endpoint: String
   ): ZIO[R, E, Response] = {
