@@ -20,29 +20,37 @@ object Main extends ZIOAppDefault {
     val port = sys.env.get("APP_PORT").flatMap(_.toIntOption).getOrElse(8080)
     ZIO.succeed(println(s"Starting server on port $port")) *> {
       Server
-        .serve(appRouter)
+        .serve(
+          appRouter.handleErrorCauseZIO(err =>
+            zio.Console.printLine(err.squash).orDie *> ZIO.succeed(
+              Response.internalServerError
+            )
+          )
+        )
         .provide(Server.defaultWithPort(port))
     }
   }
 
-  def appRouter: Routes[Any, Response] =
+  def appRouter: Routes[Any, Throwable] =
     Routes(
       Method.GET / "metrics" -> handler(
         Response.text(prometheusRegistry.scrape())
       ),
       Method.POST / "order" / "create" -> handler { req: Request =>
         withMetrics(handleCreateOrder(req), "/order/create")
-          .orElseFail(Response.internalServerError("unknown error"))
+          .tapErrorCause(err =>
+            zio.Console.printLine(s"Error on /order/create: ${err.squash}")
+          )
       },
       Method.GET / "order" -> handler { req: Request =>
-        withMetrics(handleGetOrder(req), "/order").orElseFail(
-          Response.internalServerError("unknown error")
-        )
+        withMetrics(handleGetOrder(req), "/order")
+          .tapError(err => zio.Console.printLine(s"Error on /order: $err"))
       }
     )
 
   def handleCreateOrder(req: Request): ZIO[Any, Throwable, Response] = {
     for {
+      // _ <- zio.Console.printLine("Call handle create order")
       contentType <- ZIO.succeed(req.header(Header.ContentType))
       response <- contentType match {
         case Some(ct) if ct.mediaType.matches(MediaType.application.json) =>

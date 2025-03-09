@@ -1,0 +1,17 @@
+{
+  "allowIncompleteClasspath": true,
+  "initializeAtRunTime": [
+    "io.netty.channel.DefaultFileRegion",
+    "io.netty.channel.epoll.Native",
+    "io.netty.channel.epoll.Epoll",
+    "io.netty.channel.epoll.EpollEventLoop",
+    "io.netty.channel.epoll.EpollEventArray",
+    "io.netty.channel.kqueue.KQueue",
+    "io.netty.channel.kqueue.KQueueEventLoop",
+    "io.netty.channel.kqueue.KQueueEventArray",
+    "io.netty.channel.kqueue.Native",
+    "io.netty.channel.unix.Limits",
+    "io.netty.channel.unix.Errors",
+    "io.netty.channel.unix.IovArray"
+  ]
+}

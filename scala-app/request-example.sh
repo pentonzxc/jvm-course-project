@@ -1,4 +1,7 @@
-curl -X POST "http://localhost:8080/order/create" \
+#!/bin/bash
+
+# Send a POST request with JSON data
+response=$(curl -X POST "http://localhost:8080/order/create" \
      -H "Content-Type: application/json" \
      -d '{
            "id": "550e8400-e29b-41d4-a716-446655440000",
@@ -25,6 +28,14 @@ curl -X POST "http://localhost:8080/order/create" \
              "name": "John Doe",
              "city": "New York"
            }
-         }'
+         }' -v)
+printf "%s\n" "$response"
 
-curl "http://localhost:8080/order?id=550e8400-e29b-41d4-a716-446655440000"
+# # Send a POST request using data from a file
+# curl -X POST "http://localhost:8080/order/create" \
+#      --data "@data-example.json" \
+#      -H "Content-Type: application/json"
+
+# Send a GET request and print the response
+response=$(curl -s "http://localhost:8080/order?id=550e8400-e29b-41d4-a716-446655440000")
+printf "%s\n" "$response"
