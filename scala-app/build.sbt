@@ -4,7 +4,7 @@ val circeVersion = "0.14.1"
 
 lazy val root = project
   .in(file("."))
-  // .enablePlugins(GraalVMNativeImagePlugin)
+  .enablePlugins(GraalVMNativeImagePlugin)
   .settings(
     name := "scala-course-project",
     version := "1.0.0",
@@ -12,38 +12,8 @@ lazy val root = project
   )
   .settings(
     Compile / mainClass := Some("Main"),
-    assembly / mainClass := Some("Main"),
-    assembly / assemblyOutputPath := file("./scala-app.jar"),
-    ThisBuild / assemblyMergeStrategy := {
-      case PathList("META-INF", "native-image", _*) => MergeStrategy.concat
-      case PathList("META-INF", _*)                 => MergeStrategy.first
-      case x =>
-        val oldStrategy = (assemblyMergeStrategy in assembly).value
-        oldStrategy(x)
-    }
+    assembly / mainClass := Some("Main")
   )
-  /* .settings(
-    graalVMNativeImageOptions ++= List(
-      "--no-fallback",
-      "--install-exit-handlers",
-      "--enable-http",
-      "--allow-incomplete-classpath",
-      "--initialize-at-run-time=io.netty.channel.DefaultFileRegion",
-      "--initialize-at-run-time=io.netty.channel.epoll.Native",
-      "--initialize-at-run-time=io.netty.channel.epoll.Epoll",
-      "--initialize-at-run-time=io.netty.channel.epoll.EpollEventLoop",
-      "--initialize-at-run-time=io.netty.channel.epoll.EpollEventArray",
-      "--initialize-at-run-time=io.netty.channel.kqueue.KQueue",
-      "--initialize-at-run-time=io.netty.channel.kqueue.KQueueEventLoop",
-      "--initialize-at-run-time=io.netty.channel.kqueue.KQueueEventArray",
-      "--initialize-at-run-time=io.netty.channel.kqueue.Native",
-      "--initialize-at-run-time=io.netty.channel.unix.Limits",
-      "--initialize-at-run-time=io.netty.channel.unix.Errors",
-      "--initialize-at-run-time=io.netty.channel.unix.IovArray",
-      "--initialize-at-run-time=io.netty.incubator.channel.uring",
-      "--initialize-at-run-time=io.netty.handler.ssl.BouncyCastleAlpnSslUtils"
-    )
-  ) */
   .settings(
     libraryDependencies ++=
       zioHttp ++
