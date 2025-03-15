@@ -23,20 +23,34 @@ services:
       - ./grafana/dashboards:/var/lib/grafana/dashboards
       - grafana-data:/var/lib/grafana
 
-  scala-app:
-    image: scala-app
+  scala-app-jvm:
+    image: scala-app-jvm
     build:
       context: ./scala-app
-      dockerfile: "./Dockerfile"
+      dockerfile: "./jvm.Dockerfile"
     environment:
       - APP_PORT=8080
+      - APP_LABEL=jvm
       - JAVA_TOOL_OPTIONS=-XX:StartFlightRecording=duration=10m,filename=/app/scala-app.jfr -XX:+AlwaysActAsServerClassMachine -Xmx2g -Xms2g
-      # -Xlog:compilation*=debug
-      # -XX:+BackgroundCompilation
     ports:
       - "8080:8080"
-    cpus: 1
+    cpus: 0.5
     mem_limit: 3g
+    networks:
+      - monitoring
+
+  scala-app-native:
+    image: scala-app-native
+    build:
+      context: ./scala-app
+      dockerfile: "./graal.Dockerfile"
+    environment:
+      - APP_PORT=8082
+      - APP_LABEL=native
+    ports:
+      - "8082:8082"
+    cpus: 0.5
+    mem_limit: 1g
     networks:
       - monitoring
 
@@ -46,9 +60,9 @@ services:
       context: ./go-app
       dockerfile: "./Dockerfile"
     environment:
-      - APP_PORT=8081
+      - APP_PORT=8083
     ports:
-      - "8081:8081"
+      - "8083:8083"
     cpus: 0.5
     mem_limit: 1g
     networks:
@@ -59,8 +73,21 @@ services:
       context: ./client
       dockerfile: "./Dockerfile"
     environment:
-      - TARGET_APP_HOST=scala-app
+      - TARGET_APP_HOST=scala-app-jvm
       - TARGET_APP_PORT=8080
+      - TARGET_LOAD_RPS=100
+    cpus: 0.5
+    mem_limit: 1g
+    networks:
+      - monitoring
+
+  scala-app-native-client:
+    build:
+      context: ./client
+      dockerfile: "./Dockerfile"
+    environment:
+      - TARGET_APP_HOST=scala-app-native
+      - TARGET_APP_PORT=8082
       - TARGET_LOAD_RPS=100
     cpus: 0.5
     mem_limit: 1g
@@ -73,7 +100,7 @@ services:
       dockerfile: "./Dockerfile"
     environment:
       - TARGET_APP_HOST=go-app
-      - TARGET_APP_PORT=8081
+      - TARGET_APP_PORT=8083
       - TARGET_LOAD_RPS=100
     cpus: 0.5
     mem_limit: 1g

@@ -18,10 +18,14 @@ object Main extends ZIOAppDefault {
 
   override def run: ZIO[Scope, Throwable, Unit] = {
     val port = sys.env.get("APP_PORT").flatMap(_.toIntOption).getOrElse(8080)
+    val label = sys.env
+      .get("APP_LABEL")
+      .getOrElse(throw new RuntimeException("Specify APP_LABEL in env"))
+
     ZIO.succeed(println(s"Starting server on port $port")) *> {
       Server
         .serve(
-          appRouter.handleErrorCauseZIO(err =>
+          appRouter(label).handleErrorCauseZIO(err =>
             zio.Console.printLine(err.squash).orDie *> ZIO.succeed(
               Response.internalServerError
             )
@@ -31,19 +35,19 @@ object Main extends ZIOAppDefault {
     }
   }
 
-  def appRouter: Routes[Any, Throwable] =
+  def appRouter(label: String): Routes[Any, Throwable] =
     Routes(
       Method.GET / "metrics" -> handler(
         Response.text(prometheusRegistry.scrape())
       ),
       Method.POST / "order" / "create" -> handler { req: Request =>
-        withMetrics(handleCreateOrder(req), "/order/create")
+        withMetrics(handleCreateOrder(req), "/order/create", label)
           .tapErrorCause(err =>
             zio.Console.printLine(s"Error on /order/create: ${err.squash}")
           )
       },
       Method.GET / "order" -> handler { req: Request =>
-        withMetrics(handleGetOrder(req), "/order")
+        withMetrics(handleGetOrder(req), "/order", label)
           .tapError(err => zio.Console.printLine(s"Error on /order: $err"))
       }
     )
@@ -114,7 +118,8 @@ object Main extends ZIOAppDefault {
 
   def withMetrics[R, E](
       effect: ZIO[R, E, Response],
-      endpoint: String
+      endpoint: String,
+      label: String
   ): ZIO[R, E, Response] = {
     val startTime = System.nanoTime()
     for {
@@ -122,7 +127,12 @@ object Main extends ZIOAppDefault {
       endTime = System.nanoTime()
       _ = Timer
         .builder("http.request.duration.seconds")
-        .tags(List(Tag.of("app", "scala"), Tag.of("endpoint", endpoint)).asJava)
+        .tags(
+          List(
+            Tag.of("app", s"scala-$label"),
+            Tag.of("endpoint", endpoint)
+          ).asJava
+        )
         .serviceLevelObjectives(
           Duration.ofMillis(5),
           Duration.ofMillis(10),

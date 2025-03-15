@@ -101,15 +101,17 @@ func main() {
 			resp1, err := client.Post(createOrderUrl, "application/json", bytes.NewBuffer(jsonData))
 
 			if err != nil {
-				// log.Printf("error sending create order request: %v", err)
+				fmt.Printf("Fail POST /order/create: %v\n", err)
 				return
 			}
+			fmt.Printf("Success POST /order/create: %v\n", resp1)
 
 			resp2, err := client.Get(getOrderUrl(id))
 			if err != nil {
-				// log.Printf("error sending request: %v", err)
+				fmt.Printf("Fail GET /order: %v\n", err)
 				return
 			}
+			fmt.Printf("Success GET /order: %v\n", resp2)
 
 			defer resp1.Body.Close()
 			defer resp2.Body.Close()
