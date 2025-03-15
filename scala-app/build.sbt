@@ -12,7 +12,12 @@ lazy val root = project
   )
   .settings(
     Compile / mainClass := Some("Main"),
-    assembly / mainClass := Some("Main")
+    assembly / mainClass := Some("Main"),
+    assembly / assemblyOutputPath := file("./scala-app.jar"),
+    ThisBuild / assemblyMergeStrategy := {
+      case PathList("META-INF", _*) => MergeStrategy.discard
+      case x                        => MergeStrategy.first
+    }
   )
   .settings(
     libraryDependencies ++=
@@ -50,5 +55,4 @@ val circe = Seq(
 val zioHttp = List(
   "dev.zio" %% "zio-http" % "3.0.1"
 )
-
 // run / javaOptions += s"-agentlib:native-image-agent=config-output-dir=src/main/resources/META-INF/native-image",

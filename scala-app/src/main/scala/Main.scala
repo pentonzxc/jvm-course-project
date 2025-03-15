@@ -50,7 +50,6 @@ object Main extends ZIOAppDefault {
 
   def handleCreateOrder(req: Request): ZIO[Any, Throwable, Response] = {
     for {
-      // _ <- zio.Console.printLine("Call handle create order")
       contentType <- ZIO.succeed(req.header(Header.ContentType))
       response <- contentType match {
         case Some(ct) if ct.mediaType.matches(MediaType.application.json) =>
