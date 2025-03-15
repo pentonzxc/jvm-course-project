@@ -13,7 +13,7 @@ lazy val root = project
   .settings(
     Compile / mainClass := Some("Main"),
     assembly / mainClass := Some("Main"),
-    assembly / assemblyOutputPath := file("./scala-app.jar"),
+    assembly / assemblyOutputPath := file("./target/scala-app.jar"),
     ThisBuild / assemblyMergeStrategy := {
       case PathList("META-INF", _*) => MergeStrategy.discard
       case x                        => MergeStrategy.first

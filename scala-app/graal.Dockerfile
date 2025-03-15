@@ -23,8 +23,6 @@ COPY build.sbt /app/
 COPY project /app/project
 COPY src /app/src
 
-RUN ls
-
 RUN sbt ";update;show GraalVMNativeImage / packageBin" 
 
 ENTRYPOINT ["target/graalvm-native-image/scala-course-project"]
