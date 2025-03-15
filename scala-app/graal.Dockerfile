@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 ghcr.io/graalvm/native-image-community:23.0.2-muslib-ol8-20250121
+FROM --platform=linux/amd64 ghcr.io/graalvm/native-image-community:23.0.2-muslib-ol8-20250121 as build
 
 RUN microdnf install -y \
 	git \
@@ -25,7 +25,12 @@ COPY src /app/src
 
 RUN sbt ";update;show GraalVMNativeImage / packageBin" 
 
-ENTRYPOINT ["target/graalvm-native-image/scala-course-project"]
+
+FROM alpine:3.21
+
+COPY --from=build /app/target/graalvm-native-image/scala-course-project /scala-app-native
+
+ENTRYPOINT ["/scala-app-native"]
 
 
 
