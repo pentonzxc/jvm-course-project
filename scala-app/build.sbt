@@ -4,7 +4,7 @@ val circeVersion = "0.14.1"
 
 lazy val root = project
   .in(file("."))
-  .enablePlugins(GraalVMNativeImagePlugin)
+  // .enablePlugins(GraalVMNativeImagePlugin)
   .settings(
     name := "scala-course-project",
     version := "1.0.0",
@@ -15,12 +15,18 @@ lazy val root = project
     assembly / mainClass := Some("Main"),
     assembly / assemblyOutputPath := file("./scala-app.jar"),
     ThisBuild / assemblyMergeStrategy := {
-      case PathList("META-INF", _*) => MergeStrategy.discard
-      case x                        => MergeStrategy.first
+      case PathList("META-INF", "native-image", _*) => MergeStrategy.concat
+      case PathList("META-INF", _*)                 => MergeStrategy.first
+      case x =>
+        val oldStrategy = (assemblyMergeStrategy in assembly).value
+        oldStrategy(x)
     }
   )
-  .settings(
+  /* .settings(
     graalVMNativeImageOptions ++= List(
+      "--no-fallback",
+      "--install-exit-handlers",
+      "--enable-http",
       "--allow-incomplete-classpath",
       "--initialize-at-run-time=io.netty.channel.DefaultFileRegion",
       "--initialize-at-run-time=io.netty.channel.epoll.Native",
@@ -36,9 +42,8 @@ lazy val root = project
       "--initialize-at-run-time=io.netty.channel.unix.IovArray",
       "--initialize-at-run-time=io.netty.incubator.channel.uring",
       "--initialize-at-run-time=io.netty.handler.ssl.BouncyCastleAlpnSslUtils"
-      // s"-H:ReflectionConfigurationFiles=${baseDirectory.value}/src/main/resources/META-INF/native-image/io.netty/netty-handler/native-image.properties"
     )
-  )
+  ) */
   .settings(
     libraryDependencies ++=
       zioHttp ++
@@ -85,3 +90,5 @@ val circe = Seq(
 val zioHttp = List(
   "dev.zio" %% "zio-http" % "3.0.1"
 )
+
+// run / javaOptions += s"-agentlib:native-image-agent=config-output-dir=src/main/resources/META-INF/native-image",
