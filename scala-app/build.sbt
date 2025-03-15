@@ -47,16 +47,6 @@ val circe = Seq(
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion)
 
-// dependencyOverrides ++= List(
-//   "io.netty" % "netty-codec" % "4.1.80.Final",
-//   "io.netty" % "netty-codec-http" % "4.1.80.Final",
-//   "io.netty" % "netty-common" % "4.1.80.Final",
-//   "io.netty" % "netty-handler" % "4.1.80.Final",
-//   "io.netty" % "netty-buffer" % "4.1.80.Final",
-//   "io.netty" % "netty-resolver" % "4.1.80.Final",
-//   "io.netty" % "netty-transport" % "4.1.80.Final"
-// )
-
 val zioHttp = List(
   "dev.zio" %% "zio-http" % "3.0.1"
 )

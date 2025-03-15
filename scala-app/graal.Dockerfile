@@ -1,30 +1,33 @@
-# Use a base image with sbt and JDK
-FROM sbtscala/scala-sbt:graalvm-ce-22.3.3-b1-java17_1.10.6_2.13.15
+FROM --platform=linux/amd64 ghcr.io/graalvm/native-image-community:23.0.2-muslib-ol8-20250121
 
-# Set working directory
+RUN microdnf install -y \
+	git \
+	tar \
+	curl \
+	unzip \
+	&& microdnf clean all
+
+# try to fix --insecure problem, not help
+# RUN curl -o /etc/pki/ca-trust/source/anchors/mozilla-ca.pem https://curl.se/ca/cacert.pem && \
+# 	update-ca-trust extract
+
+# Install SBT
+RUN curl --insecure -L -o sbt.tgz https://github.com/sbt/sbt/releases/download/v1.10.6/sbt-1.10.6.tgz && \
+	tar -xvzf sbt.tgz -C /usr/local && \
+	rm sbt.tgz && \
+	ln -s /usr/local/sbt/bin/sbt /usr/local/bin/sbt
+
 WORKDIR /app
-
-# Copy the sbt project files
+# copy sources
 COPY build.sbt /app/
 COPY project /app/project
-
-# Fetch sbt dependencies
-RUN sbt update
-
-# Copy the source code
 COPY src /app/src
 
-# Build the assembly JAR
-RUN sbt assembly
+RUN ls
 
-# Use a minimal base image for the runtime
-FROM eclipse-temurin:17.0.13_11-jdk-noble
+RUN sbt ";update;show GraalVMNativeImage / packageBin" 
 
-# Set working directory
-WORKDIR /app
+ENTRYPOINT ["target/graalvm-native-image/scala-course-project"]
 
-# Copy the assembled JAR from the build stage
-COPY --from=0 /app/scala-app.jar app.jar
 
-# Define the entry point
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
