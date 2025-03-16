@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-config
+data:
+  dashboard.yaml: |
+    {{- .Files.Get "../config/provisioning/dashboard.yaml" | nindent 4 }}
+  datasource.yaml: |
+    {{- .Files.Get "../config/provisioning/datasource.yaml" | nindent 4 }}

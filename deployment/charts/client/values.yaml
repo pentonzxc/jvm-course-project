@@ -1,0 +1,24 @@
+clients:
+  - name: scala-app-client
+    target_host: scala-app-jvm
+    target_port: 8080
+  - name: scala-app-native-client
+    target_host: scala-app-native
+    target_port: 8082
+  - name: go-app-client
+    target_host: go-app
+    target_port: 8083
+
+apps:
+  - name: scala-app
+    app_port: 8080
+    label: jvm
+
+  - name: scala-native-app
+    app_port: 8082
+    label: native
+
+  - name: go-app
+    app_port: 8083
+    # not nessacary
+    label: ''

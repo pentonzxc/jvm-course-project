@@ -1,0 +1,24 @@
+{{- range .Values.clients }}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ .name }}"  # 👈 Ensures each Pod has a unique name
+spec:
+  containers:
+    - name: "{{ .name }}"  # 👈 Correct container name reference
+      image: course-project-client-target-loader:latest
+      imagePullPolicy: Never
+      resources:
+        limits:
+          cpu: "0.5"
+          memory: "1Gi"
+      env:
+        - name: TARGET_APP_HOST
+          value: "{{ .target_host }}"
+        - name: TARGET_APP_PORT
+          value: "{{ .target_port }}"
+        - name: TARGET_LOAD_RPS
+          value: "100"
+{{- end }}
+

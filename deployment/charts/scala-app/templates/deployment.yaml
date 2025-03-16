@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scala-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scala-app
+  template:
+    metadata:
+      labels:
+        app: scala-app
+    spec:
+      containers:
+        - name: scala-app-jvm
+          image: scala-app-jvm
+          ports:
+            - containerPort: { { .Values.jvm.port } }
+          env:
+            - name: APP_PORT
+              value: '{{ .Values.jvm.port }}'
+            - name: APP_LABEL
+              value: '{{ .Values.jvm.label}}'
+
+        - name: scala-app-native
+          image: scala-app-native
+          ports:
+            - containerPort: { { .Values.native.port } }
+          env:
+            - name: APP_PORT
+              value: '{{ .Values.native.port }}'
+            - name: APP_LABEL
+              value: '{{ .Values.native.label}}'

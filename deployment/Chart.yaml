@@ -1,0 +1,22 @@
+apiVersion: v2
+name: course-project
+description: Helm chart for monitoring & applications
+type: application
+version: 0.1.0
+appVersion: '1.0'
+dependencies:
+  # - name: prometheus
+  #   version: 0.1.0
+  #   repository: 'file://charts/prometheus'
+  # - name: grafana
+  #   version: 0.1.0
+  #   repository: 'file://charts/grafana'
+  - name: scala-app
+    version: 0.1.0
+    repository: 'file://charts/scala-app'
+  # - name: go-app
+  #   version: 0.1.0
+  #   repository: 'file://charts/go-app'
+  - name: client
+    version: 0.1.0
+    repository: 'file://charts/clients'
