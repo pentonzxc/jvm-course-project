@@ -16,3 +16,18 @@ run-rebuild args="":
 
 watch-logs args="":
   while true; do sleep 2; docker-compose logs {{ args }} -f; done
+
+run-go-and-graal args="":
+    docker-compose up scala-app-native go-app scala-app-client go-app-lciet
+
+[no-cd]
+helm-run:
+    helm install course-project . -f values.yaml
+
+
+[no-cd]
+helm-stop:
+    helm uninstall course-project
+
+pods-get:
+    kubectl get pods

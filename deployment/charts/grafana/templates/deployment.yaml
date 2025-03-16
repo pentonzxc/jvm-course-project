@@ -1,41 +1,41 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: grafana
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: grafana
-  template:
-    metadata:
-      labels:
-        app: grafana
-    spec:
-      containers:
-        - name: grafana
-          image: grafana/grafana
-          ports:
-            - containerPort: { { .Values.service.port } }
-          env:
-            - name: GF_SECURITY_ADMIN_PASSWORD
-              value: '{{ .Values.adminPassword }}'
-          volumeMounts:
-            - name: config
-              mountPath: /etc/grafana/provisioning/dashboards/dashboard.yaml
-              subPath: dashboard.yaml
-
-            - name: config
-              mountPath: /etc/grafana/provisioning/datasources/datasource.yaml
-              subPath: datasource.yaml
-
-            - name: dashboards-storage
-              mountPath: /var/lib/grafana
-      volumes:
-        - name: config
-          configMap:
-            name: grafana-config
-
-        - name: dashboards-storage
-          hostPath:
-            path: ../config/dashboards
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: grafana
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: grafana
+#   template:
+#     metadata:
+#       labels:
+#         app: grafana
+#     spec:
+#       containers:
+#         - name: grafana
+#           image: grafana/grafana
+#           ports:
+#             - containerPort: { { .Values.grafana.service.port } }
+#           env:
+#             - name: GF_SECURITY_ADMIN_PASSWORD
+#               value: '{{ .Values.adminPassword }}'
+#           volumeMounts:
+#             - name: config
+#               mountPath: /etc/grafana/provisioning/dashboards/dashboard.yaml
+#               subPath: dashboard.yaml
+#
+#             - name: config
+#               mountPath: /etc/grafana/provisioning/datasources/datasource.yaml
+#               subPath: datasource.yaml
+#
+#             - name: dashboards-storage
+#               mountPath: /var/lib/grafana
+#       volumes:
+#         - name: config
+#           configMap:
+#             name: grafana-config
+#
+#         - name: dashboards-storage
+#           hostPath:
+#             path: ../config/dashboards

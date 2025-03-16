@@ -1,23 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: go-app
+  name: scala-app-jvm
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: go-app
+      app: scala-app-jvm
   template:
     metadata:
       labels:
-        app: go-app
+        app: scala-app-jvm
     spec:
       containers:
-        - name: go-app
-          image: go-app
+        - name: scala-app-jvm
+          image: scala-app-jvm:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
           env:
             - name: APP_PORT
               value: "8080"
+            - name: APP_LABEL
+              value: {{ .Values.label }}
+        

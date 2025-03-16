@@ -1,0 +1,5 @@
+port: 8080
+cpu: '0.5'
+label: "jvm"
+memory: '3Gi'
+

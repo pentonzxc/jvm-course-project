@@ -1,0 +1,45 @@
+{{- range .Values.clients }}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .name }}  
+spec:
+  containers:
+    - name: {{ .name }}  
+      image: course-project-client-target-loader:latest
+      imagePullPolicy: Never
+      resources:
+        limits:
+          cpu: "0.5"
+          memory: "1Gi"
+      env:
+        - name: TARGET_APP_HOST
+          value: {{ .target_host }}
+        - name: TARGET_APP_PORT
+          value: {{ .target_port | quote }}
+        - name: TARGET_LOAD_RPS
+          value: "100"
+{{- end }}
+
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   name: scala-app-client  
+# spec:
+#   containers:
+#     - name: scala-app-client
+#       image: course-project-client-target-loader:latest
+#       imagePullPolicy: Never
+#       resources:
+#         limits:
+#           cpu: "0.5"
+#           memory: "1Gi"
+#       env:
+#         - name: TARGET_APP_HOST
+#           value: "scala-app-jvm"
+#         - name: TARGET_APP_PORT
+#           value: "8080"
+#         - name: TARGET_LOAD_RPS
+#           value: "100"
+

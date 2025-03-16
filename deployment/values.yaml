@@ -1,3 +1,7 @@
+# idk, this config just work
+# parent config does not propagate to childrens.
+# this is shit
+
 prometheus:
   service:
     port: 9090
@@ -7,32 +11,32 @@ grafana:
   service:
     port: 3000
 
-scala-app:
-  jvm:
-    port: 8080
-    cpu: '0.5'
-    label: jvm
-    memory: '3Gi'
-  native:
-    port: 8082
-    label: native
-    cpu: '0.5'
-    memory: '1Gi'
+scala-app-jvm:
+  port: 8080
+  cpu: '0.5'
+  label: "jvm"
+  memory: '3Gi'
+
+scala-app-native:
+  port: 8082
+  label: "native"
+  cpu: '0.5'
+  memory: '1Gi'
 
 go-app:
   port: 8083
   cpu: '0.5'
   memory: '1Gi'
 
-clients:
-  - name: scala-app-client
-    target_host: scala-app-jvm
-    target_port: 8080
-
-  - name: scala-app-native-client
-    target_host: scala-app-native
-    target_port: 8082
-
-  - name: go-app-client
-    target_host: go-app
-    target_port: 8083
+# clients:
+#   - name: "scala-app-client"
+#     target_host: "scala-network"
+#     target_port: "8080"
+#
+#   - name: "scala-app-native-client"
+#     target_host: "scala-app-native"
+#     target_port: "8082"
+#
+#   - name: "go-app-client"
+#     target_host: "go-app"
+#     target_port: "8083"
