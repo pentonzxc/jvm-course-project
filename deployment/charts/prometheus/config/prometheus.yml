@@ -1,24 +1,24 @@
-global:
-  scrape_interval: 15s
-
-scrape_configs:
-
-  - job_name: 'prometheus'
-    scrape_interval: 1s
-    static_configs:
-      - targets: ['localhost:9090']
-
-  - job_name: 'scala-app-jvm'
-    scrape_interval: 1s
-    static_configs:
-      - targets: ['scala-app-jvm:8080']
-
-  - job_name: 'scala-app-native'
-    scrape_interval: 1s
-    static_configs:
-      - targets: ['scala-app-native:8082']
-
-  - job_name: 'go-app'
-    scrape_interval: 1s
-    static_configs:
-      - targets: ['go-app:8083']
+# global:
+#   scrape_interval: 15s
+#
+# scrape_configs:
+#
+#   - job_name: 'prometheus'
+#     scrape_interval: 1s
+#     static_configs:
+#       - targets: ['localhost:9090']
+#
+#   - job_name: 'scala-app-jvm'
+#     scrape_interval: 1s
+#     static_configs:
+#       - targets: ['scala-app-jvm:8080']
+#
+#   - job_name: 'scala-app-native'
+#     scrape_interval: 1s
+#     static_configs:
+#       - targets: ['scala-app-native:8082']
+#
+#   - job_name: 'go-app'
+#     scrape_interval: 1s
+#     static_configs:
+#       - targets: ['go-app:8083']

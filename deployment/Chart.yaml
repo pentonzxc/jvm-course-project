@@ -5,21 +5,26 @@ type: application
 version: 0.1.0
 appVersion: '1.0'
 dependencies:
-  # - name: prometheus
-  #   version: 0.1.0
-  #   repository: 'file://charts/prometheus'
+  - name: prometheus
+    version: 0.1.0
+    repository: 'file://charts/prometheus'
+
   # - name: grafana
   #   version: 0.1.0
   #   repository: 'file://charts/grafana'
+
   - name: scala-app-jvm
     version: 0.1.0
     repository: 'file://charts/scala-app-jvm'
-  # - name: scala-app-native
-  #   version: 0.1.0
-  #   repository: 'file://charts/scala-app-native'
-  # - name: go-app
-  #   version: 0.1.0
-  #   repository: 'file://charts/go-app'
+
+  - name: scala-app-native
+    version: 0.1.0
+    repository: 'file://charts/scala-app-native'
+
+  - name: go-app
+    version: 0.1.0
+    repository: 'file://charts/go-app'
+
   - name: clients
     version: 0.1.0
     repository: 'file://charts/clients'

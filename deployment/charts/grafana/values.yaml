@@ -1,4 +1,4 @@
-adminPassword: '123'
+adminPassword: "123"
 service:
   port: 3000
 
