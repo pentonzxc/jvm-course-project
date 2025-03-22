@@ -24,9 +24,9 @@ lazy val root = project
 
     ThisBuild / assemblyMergeStrategy := {
       case x @ PathList("META-INF", "native-image", xs @ _*) =>
-        if (!isLinux && xs.contains("netty-handler-linux"))
-          MergeStrategy.discard
-        else if (isLinux && xs.contains("netty-handler-default"))
+        // if (!isLinux && xs.contains("netty-handler-linux"))
+        //   MergeStrategy.discard
+        if (isLinux && xs.contains("netty-handler-default"))
           MergeStrategy.discard
         else MergeStrategy.first
 

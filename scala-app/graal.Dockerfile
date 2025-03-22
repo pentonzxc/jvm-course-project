@@ -22,13 +22,19 @@ WORKDIR /app
 COPY build.sbt /app/
 COPY project /app/project
 COPY src /app/src
+COPY native.bash /app/
 
-RUN sbt ";update;show GraalVMNativeImage / packageBin" 
 
+# fix InvalidPathException in sbt
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+
+RUN chmod +x /app/native.bash
+RUN bash /app/native.bash
 
 FROM alpine:3.21
 
-COPY --from=build /app/target/graalvm-native-image/scala-course-project /scala-app-native
+COPY --from=build /app/scala-app-native /scala-app-native
 
 ENTRYPOINT ["/scala-app-native"]
 
