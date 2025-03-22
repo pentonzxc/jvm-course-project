@@ -21,8 +21,8 @@ run-go-and-graal args="":
     docker-compose up scala-app-native go-app scala-app-client go-app-lciet
 
 [no-cd]
-helm-run:
-    helm install course-project . -f values.yaml
+helm-run args="":
+    helm install course-project . -f values.yaml {{ args }}
 
 
 [no-cd]

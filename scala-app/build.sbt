@@ -1,6 +1,11 @@
+import org.apache.tools.ant.util.MergingMapper
+import org.apache.logging.log4j.core.config.composite
 val prometheusVersion = "1.3.3"
 val doobieVersion = "1.0.0-RC4"
 val circeVersion = "0.14.1"
+
+val os: String = System.getProperty("os.name").toLowerCase
+def isLinux: Boolean = os.contains("linux")
 
 lazy val root = project
   .in(file("."))
@@ -14,9 +19,19 @@ lazy val root = project
     Compile / mainClass := Some("Main"),
     assembly / mainClass := Some("Main"),
     assembly / assemblyOutputPath := file("./target/scala-app.jar"),
+    // for testing
+    // GraalVMNativeImage / graalVMNativeImageOptions ++= List("--verbose"),
+
     ThisBuild / assemblyMergeStrategy := {
-      case PathList("META-INF", _*) => MergeStrategy.discard
-      case x                        => MergeStrategy.first
+      case x @ PathList("META-INF", "native-image", xs @ _*) =>
+        if (!isLinux && xs.contains("netty-handler-linux"))
+          MergeStrategy.discard
+        else if (isLinux && xs.contains("netty-handler-default"))
+          MergeStrategy.discard
+        else MergeStrategy.first
+
+      case x @ PathList("META-INF", _*) => MergeStrategy.discard
+      case x                            => MergeStrategy.first
     }
   )
   .settings(

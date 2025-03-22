@@ -35,3 +35,4 @@ metals.sbt
 .env
 
 thrash/
+scala-app
