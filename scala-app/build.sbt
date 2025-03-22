@@ -5,7 +5,7 @@ val doobieVersion = "1.0.0-RC4"
 val circeVersion = "0.14.1"
 
 val os: String = System.getProperty("os.name").toLowerCase
-def isLinux: Boolean = os.contains("linux")
+def isMacos: Boolean = os.contains("macos")
 
 lazy val root = project
   .in(file("."))
@@ -24,9 +24,10 @@ lazy val root = project
 
     ThisBuild / assemblyMergeStrategy := {
       case x @ PathList("META-INF", "native-image", xs @ _*) =>
-        // if (!isLinux && xs.contains("netty-handler-linux"))
-        //   MergeStrategy.discard
-        if (isLinux && xs.contains("netty-handler-default"))
+        // idk, just os.contains("linux") doesn't work properly on alpine
+        if (isMacos && xs.contains("netty-handler-default"))
+          MergeStrategy.first
+        else if(!isMacos && xs.contains("netty-handler-default")) 
           MergeStrategy.discard
         else MergeStrategy.first
 
