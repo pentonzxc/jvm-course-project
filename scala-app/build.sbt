@@ -13,7 +13,7 @@ lazy val root = project
   .settings(
     name := "scala-course-project",
     version := "1.0.0",
-    scalaVersion := "2.13.15"
+    scalaVersion := "2.13.16"
   )
   .settings(
     Compile / mainClass := Some("Main"),
@@ -38,6 +38,7 @@ lazy val root = project
   .settings(
     libraryDependencies ++=
       prometheus ++
+        zioHttp ++
         micrometer ++
         circe ++
         munit
@@ -66,4 +67,9 @@ val circe = Seq(
   "io.circe" %% "circe-generic-extras",
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion)
+
+val zioHttp = Seq(
+  "dev.zio" %% "zio-http" % "3.1.0"
+)
+
 // run / javaOptions += s"-agentlib:native-image-agent=config-output-dir=src/main/resources/META-INF/native-image",

@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 ghcr.io/graalvm/native-image-community:23.0.2-muslib-ol8-20250121 as build
+FROM ghcr.io/graalvm/native-image-community:23.0.2-muslib-ol8-20250121 as build
 
 RUN microdnf install -y \
 	git \
@@ -21,7 +21,6 @@ WORKDIR /app
 # copy sources
 COPY build.sbt /app/
 COPY project /app/project
-COPY lib-graal /app/lib
 COPY src /app/src
 COPY native.bash /app/
 

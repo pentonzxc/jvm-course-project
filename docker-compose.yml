@@ -54,6 +54,18 @@ services:
     networks:
       - monitoring
 
+  scala-app-crac:
+    image: scala-app-crac
+    environment:
+      - APP_PORT=8084
+      - APP_LABEL=crac
+    ports:
+      - "8084:8084"
+    cpus: 0.5
+    mem_limit: 3g
+    networks:
+      - monitoring
+
   go-app:
     image: go-app
     build:
@@ -93,6 +105,21 @@ services:
     mem_limit: 1g
     networks:
       - monitoring
+
+
+  scala-app-crac-client:
+    build:
+      context: ./client
+      dockerfile: "./Dockerfile"
+    environment:
+      - TARGET_APP_HOST=scala-app-crac
+      - TARGET_APP_PORT=8084
+      - TARGET_LOAD_RPS=100
+    cpus: 0.5
+    mem_limit: 1g
+    networks:
+      - monitoring
+
 
   go-app-client:
     build:
