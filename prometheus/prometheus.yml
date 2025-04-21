@@ -13,6 +13,12 @@ scrape_configs:
     static_configs:
       - targets: ['scala-app-jvm:8080']
 
+
+  - job_name: 'scala-app-crac'
+    scrape_interval: 1s
+    static_configs:
+      - targets: ['scala-app-crac:8084']
+
   - job_name: 'scala-app-native'
     scrape_interval: 1s
     static_configs:

@@ -1,0 +1,11 @@
+FROM --platform=linux/amd64 amazoncorretto:21.0.6-alpine3.21
+
+RUN apk --no-cache add curl
+
+WORKDIR /app
+
+COPY ./zio-http-with-crac2.jar /app/scala-app.jar
+
+ENTRYPOINT ["java", "-jar", "/app/scala-app.jar"]
+
+
