@@ -27,7 +27,7 @@ lazy val root = project
         // idk, just os.contains("linux") doesn't work properly on alpine
         if (isMacos && xs.contains("netty-handler-default"))
           MergeStrategy.first
-        else if(!isMacos && xs.contains("netty-handler-default")) 
+        else if (!isMacos && xs.contains("netty-handler-default"))
           MergeStrategy.discard
         else MergeStrategy.first
 
@@ -37,8 +37,7 @@ lazy val root = project
   )
   .settings(
     libraryDependencies ++=
-      zioHttp ++
-        prometheus ++
+      prometheus ++
         micrometer ++
         circe ++
         munit
@@ -67,8 +66,4 @@ val circe = Seq(
   "io.circe" %% "circe-generic-extras",
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion)
-
-val zioHttp = List(
-  "dev.zio" %% "zio-http" % "3.0.1"
-)
 // run / javaOptions += s"-agentlib:native-image-agent=config-output-dir=src/main/resources/META-INF/native-image",

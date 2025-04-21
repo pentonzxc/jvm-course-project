@@ -21,6 +21,7 @@ WORKDIR /app
 # copy sources
 COPY build.sbt /app/
 COPY project /app/project
+COPY lib-graal /app/lib
 COPY src /app/src
 COPY native.bash /app/
 
@@ -29,6 +30,7 @@ COPY native.bash /app/
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 
+RUN sbt ";update;show assembly" 
 RUN chmod +x /app/native.bash
 RUN bash /app/native.bash
 

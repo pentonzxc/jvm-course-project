@@ -15,6 +15,7 @@ WORKDIR /app
 COPY build.sbt /app/
 COPY project /app/project
 COPY src /app/src
+COPY lib /app/lib
 
 RUN sbt ";update;show assembly" 
 

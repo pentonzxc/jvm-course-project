@@ -1,7 +1,13 @@
 #!/bin/bash
 
+# Check for --quiet or -q argument
+QUIET=false
+if [[ "$1" == "-q" ]]; then
+    QUIET=true
+fi
+
 # Send a POST request with JSON data
-response=$(curl -X POST "http://localhost:8080/order/create" \
+post_response=$(curl -s -X POST "http://localhost:8080/order/create" \
      -H "Content-Type: application/json" \
      -d '{
            "id": "550e8400-e29b-41d4-a716-446655440000",
@@ -28,14 +34,16 @@ response=$(curl -X POST "http://localhost:8080/order/create" \
              "name": "John Doe",
              "city": "New York"
            }
-         }' -v)
-printf "%s\n" "$response"
+         }')
 
-# # Send a POST request using data from a file
-# curl -X POST "http://localhost:8080/order/create" \
-#      --data "@data-example.json" \
-#      -H "Content-Type: application/json"
+# Print only if not quiet
+if [ "$QUIET" = false ]; then
+    printf "POST Response:\n%s\n\n" "$post_response"
+fi
 
 # Send a GET request and print the response
-response=$(curl -s "http://localhost:8080/order?id=550e8400-e29b-41d4-a716-446655440000")
-printf "%s\n" "$response"
+get_response=$(curl -s "http://localhost:8080/order?id=550e8400-e29b-41d4-a716-446655440000")
+
+if [ "$QUIET" = false ]; then
+    printf "GET Response:\n%s\n" "$get_response"
+fi
